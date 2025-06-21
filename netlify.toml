@@ -1,17 +1,12 @@
 [build]
-  # The directory for your app within the Nx monorepo
-  base = "apps/trucksync"            # ✅ Replace "my-app" with your actual app name
-  command = "npx nx build my-app" # ✅ Build command for the Nx app
-  publish = "dist/apps/trucksync"    # ✅ Output directory for the Nx app
+command = "npx nx build @react-monorepo/trucksync"
+publish = "apps/trucksync/dist"
 
-# Optional: If using the skip-build plugin
 [[plugins]]
-  package = "netlify-plugin-nx-skip-build"
+package = "netlify-plugin-nx-skip-build"
 
-# Optional: Set Node version explicitly
 [build.environment]
-  NODE_VERSION = "22"
+NODE_VERSION = "22"
 
-# Optional: Specific context (e.g., production, branch deployments)
 [context.production.environment]
-  NODE_ENV = "production"
+NODE_ENV = "production"

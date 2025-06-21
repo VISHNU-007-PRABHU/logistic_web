@@ -67,7 +67,7 @@
   "nx": {
     "targets": {
       "deploy": {
-        "command": "netlify deploy --dir=dist",
+        "command": "netlify deploy --dir=apps/trucksync/dist",
         "dependsOn": [
           "build"
         ],
