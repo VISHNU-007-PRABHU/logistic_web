@@ -15,7 +15,3 @@
 # Optional: Specific context (e.g., production, branch deployments)
 [context.production.environment]
   NODE_ENV = "production"
-
-
-  git config --global user.email "vishnuselvam15cse@gmail.com"
-  git config --global user.name "VISHNU-007-PRABHU"
