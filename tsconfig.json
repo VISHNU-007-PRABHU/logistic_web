@@ -8,6 +8,21 @@
     },
     {
       "path": "./apps/trucksync"
+    },
+    {
+      "path": "./apps/vendors-e2e"
+    },
+    {
+      "path": "./apps/vendors"
+    },
+    {
+      "path": "./libs"
+    },
+    {
+      "path": "./libs/shared/ui"
+    },
+    {
+      "path": "./libs/orders"
     }
   ]
 }
