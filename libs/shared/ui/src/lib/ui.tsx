@@ -1,9 +1,9 @@
 export function ReactMonorepoUi() {
   return (
-    <div className={styles['container']}>
+    <div className={""}>
       <h1>Welcome to ReactMonorepoUi!</h1>
     </div>
-  );
+  );  
 }
 
 export default ReactMonorepoUi;

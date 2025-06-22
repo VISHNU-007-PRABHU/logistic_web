@@ -65,15 +65,19 @@
     "libs/*"
   ],
   "nx": {
-    "targets": {
-      "deploy": {
-        "command": "netlify deploy --dir=apps/trucksync/dist",
+    "nx": {
+      "targets": {
+        "deploy": {
+          "command": "netlify deploy --dir=dist/apps/trucksync",
+          "dependsOn": [
+            "build"
+          ]
+        }
+      },
+      "deploy:vendors": {
+        "command": "netlify deploy --dir=dist/apps/vendors",
         "dependsOn": [
-          "build"
-        ],
-        "tags": [
-          "type:feature",
-          "scope:products"
+          "build:vendors"
         ]
       }
     }

@@ -1,5 +1,14 @@
 {
   "name": "@react-monorepo/trucksync",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
+    "recharts": "^2.15.4"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.18"
+  }
 }

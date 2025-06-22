@@ -1,0 +1,12 @@
+[build]
+command = "npx nx build @react-monorepo/vendors"
+publish = "apps/vendors/dist"
+
+[[plugins]]
+package = "netlify-plugin-nx-skip-build"
+
+[build.environment]
+NODE_VERSION = "22"
+
+[context.production.environment]
+NODE_ENV = "production"
