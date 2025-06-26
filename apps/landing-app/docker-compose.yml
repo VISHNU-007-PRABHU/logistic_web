@@ -1,0 +1,6 @@
+services:
+  trucksync:
+    build: .
+    container_name: trucksync
+    ports:
+      - 8080:8080
