@@ -16,6 +16,16 @@ const ThemeEditor: React.FC = () => {
     setOpen(true);
   };
 
+  // Set initial form values when the component mounts
+  React.useEffect(() => {
+    if (open) {
+      form.setFieldsValue({
+        primaryColor: themeConfig.token?.colorPrimary || '#1677ff',
+        borderRadius: themeConfig.token?.borderRadius || 6,
+      });
+    }
+  }, [open, form]);
+
   const onClose = () => {
     setOpen(false);
   };
@@ -71,10 +81,6 @@ const ThemeEditor: React.FC = () => {
           form={form}
           layout="vertical"
           onFinish={onFinish}
-          initialValues={{
-            primaryColor: themeConfig.token?.colorPrimary || '#1677ff',
-            borderRadius: themeConfig.token?.borderRadius || 6,
-          }}
         >
           <Form.Item 
             name="primaryColor" 

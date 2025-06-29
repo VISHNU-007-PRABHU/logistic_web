@@ -40,6 +40,7 @@ import { Breadcrumb, Flex, Layout, Menu, theme } from 'antd';
 import TabsComponent from './tabs';
 import CustomFlex from './CustomFlex';
 import CustomFloaterButton from './CustomFloater';
+import FindLoads from './book';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -117,10 +118,18 @@ const AppContent: React.FC = () => {
             }
           />
           <Route
-            path="/book"
+            path="/try"
             element={
               <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
                 <BookingPage />
+              </AuthWrapper>
+            }
+          />
+          <Route
+            path="/book"
+            element={
+              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                <FindLoads />
               </AuthWrapper>
             }
           />

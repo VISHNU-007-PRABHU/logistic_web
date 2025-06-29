@@ -17,8 +17,8 @@ const defaultTheme: ThemeConfig = {
   },
   components: {
     Layout: {
-      colorBgHeader: '#001529',
-      colorBgBody: '#f5f5f5',
+      headerBg: '#001529',
+      bodyBg: '#f5f5f5',
     },
   },
 };
