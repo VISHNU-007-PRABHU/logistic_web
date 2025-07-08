@@ -1,0 +1,9 @@
+.filter-tags-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.filter-tags-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}

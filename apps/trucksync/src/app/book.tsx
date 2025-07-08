@@ -83,16 +83,16 @@ const Find: React.FC<FindProps> = ({ mode }) => {
         backgroundImage: `url(${truckImage}), linear-gradient(120deg, #1890ff 60%, #e6f7ff 100%)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        minHeight: '220px',
+        minHeight: screens.xs ? '180px' : '220px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
         color: 'white',
         textAlign: 'left',
-        padding: '32px 32px 32px 48px',
+        padding: screens.xs ? '20px 16px' : '32px 32px 32px 48px',
         borderRadius: 16,
-        marginBottom: 32,
+        marginBottom: screens.xs ? '16px' : '32px',
         position: 'relative',
         overflow: 'hidden'
     };
@@ -210,46 +210,76 @@ const Find: React.FC<FindProps> = ({ mode }) => {
     );
 
     return (
-        <div style={{ background: '#f4f8fb', minHeight: '100vh', padding: '32px 0' }}>
-            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-                <div style={bannerStyle}>
-                    <Title level={2} style={{ color: '#fff', marginBottom: 8 }}>
-                        <Space size="middle">
-                            {mode === 'findLoad' ? <ShoppingCartOutlined /> : <CarOutlined />}
-                            {mode === 'findLoad'
-                                ? 'Find Online Load Booking'
-                                : 'Find Available Trucks'}
+        <div style={{ background: '#f4f8fb', minHeight: '100vh', padding: screens.xs ? '0 0 80px 0' : '32px 0' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto', padding: screens.xs ? 0 : '0 16px', width: '100%' }}>
+                {!screens.xs && (
+                    <>
+                        <div style={bannerStyle}>
+                            <Title level={2} style={{ color: '#fff', marginBottom: 8 }}>
+                                <Space size="middle">
+                                    {mode === 'findLoad' ? <ShoppingCartOutlined /> : <CarOutlined />}
+                                    {mode === 'findLoad'
+                                        ? 'Find Online Load Booking'
+                                        : 'Find Available Trucks'}
+                                </Space>
+                            </Title>
+                            <Text style={{ fontSize: 18, color: '#fff', opacity: 0.95 }}>
+                                {mode === 'findLoad'
+                                    ? 'Connect with reliable transporters and shippers across India. Get the best rates for your cargo.'
+                                    : 'Browse trucks available for your route and requirements. Book instantly or contact the owner.'}
+                            </Text>
+                        </div>
+                        <Card style={filterCardStyle}>
+                            {renderFilters()}
+                        </Card>
+                    </>
+                )}
+                <Card 
+                    style={{ 
+                        ...filterCardStyle, 
+                        marginBottom: 0, 
+                        borderRadius: screens.xs ? 0 : '12px',
+                        boxShadow: screens.xs ? 'none' : filterCardStyle.boxShadow
+                    }} 
+                    bodyStyle={{ 
+                        padding: screens.xs ? '12px' : '24px' 
+                    }}
+                >
+                    {!screens.xs && (
+                        <Space direction="vertical" style={{ width: '100%' }} size="large">
+                            <Text strong style={{ fontSize: '16px', padding: '0 0 16px 0' }}>
+                                {mode === 'findLoad' ? 'Available Loads' : 'Available Trucks'}
+                            </Text>
                         </Space>
-                    </Title>
-                    <Text style={{ fontSize: 18, color: '#fff', opacity: 0.95 }}>
-                        {mode === 'findLoad'
-                            ? 'Connect with reliable transporters and shippers across India. Get the best rates for your cargo.'
-                            : 'Browse trucks available for your route and requirements. Book instantly or contact the owner.'}
-                    </Text>
-                </div>
-                <Card style={filterCardStyle}>
-                    {renderFilters()}
-                </Card>
-                <Card style={{ ...filterCardStyle, marginBottom: 0 }}>
-                    <Space direction="vertical" style={{ width: '100%' }} size="large">
-                        <Text strong style={{ fontSize: '16px', padding: '24px 24px 0' }}>
-                            {mode === 'findLoad' ? 'Available Loads' : 'Available Trucks'}
-                        </Text>
-                        {mode === 'findLoad' ? (
-                            <CardList filters={filters} onFilterChange={handleFilterChange} />
-                        ) : (
-                            <TruckCardList filters={filters} onFilterChange={handleFilterChange} />
-                        )}
-                    </Space>
+                    )}
+                    {mode === 'findLoad' ? (
+                        <CardList filters={filters} onFilterChange={handleFilterChange} />
+                    ) : (
+                        <TruckCardList filters={filters} onFilterChange={handleFilterChange} />
+                    )}
                 </Card>
             </div>
             {/* Mobile Affixed Button and Drawer */}
             {Grid.useBreakpoint().xs && (
                 <>
-                    <Affix offsetBottom={0} style={{ zIndex: 10 }}>
-                        <div style={{ padding: '16px', textAlign: 'center', background: 'white', boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)' }}>
-                            <Button type="primary" onClick={() => setDrawerVisible(true)} block>
-                                <SearchOutlined /> Show Filters
+                    <Affix offsetBottom={0} style={{ zIndex: 10, width: '100%' }}>
+                        <div style={{ 
+                            padding: '12px 16px',
+                            textAlign: 'center', 
+                            background: 'white', 
+                            boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
+                            borderTop: '1px solid #f0f0f0',
+                            width: '100%'
+                        }}>
+                            <Button 
+                                type="primary" 
+                                onClick={() => setDrawerVisible(true)} 
+                                block
+                                size="middle"
+                                style={{ height: '48px', fontSize: '16px' }}
+                                icon={<SearchOutlined style={{ fontSize: '18px' }} />}
+                            >
+                                {mode === 'findLoad' ? 'Search Loads' : 'Search Trucks'}
                             </Button>
                         </div>
                     </Affix>

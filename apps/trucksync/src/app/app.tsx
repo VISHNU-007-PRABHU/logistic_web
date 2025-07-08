@@ -312,19 +312,22 @@ const AppContent: React.FC = () => {
         colorTextHeading: '#18181a',
       }
     }}>
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout style={{ minHeight: '100vh', position: 'relative' }}>
         {/* Header with horizontal Menu */}
         <Header style={{
           padding: 0,
           background: themeConfig.token?.colorBgContainer || '#fff',
-          position: 'sticky',
+          position: 'fixed',
           top: 0,
-          zIndex: 9,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
           height: 'auto',
           borderBottom: `1px solid ${themeConfig.token?.colorBorderBg || '#f0f0f0'}`,
           display: 'flex',
           flexDirection: 'column',
+          width: '100%',
         }}>
           <div style={{
             display: 'flex',
@@ -432,11 +435,15 @@ const AppContent: React.FC = () => {
           {/* Optional: Sub-header with search */}
           <div style={{
             padding: '12px 24px',
-            background: '#fafbfc',
+            background: themeConfig.token?.colorBgContainer || '#fafbfc',
             borderTop: `1px solid ${themeConfig.token?.colorBorderBg || '#f0f0f0'}`,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            position: 'sticky',
+            top: 64, // Height of the main header
+            zIndex: 999,
+            width: '100%'
           }}>
             <Search
               placeholder="Search for loads, trucks, or locations..."
@@ -463,8 +470,19 @@ const AppContent: React.FC = () => {
             />
           </div>
         </Header>
-        <Layout style={{ marginLeft: 0, transition: 'none' }}>
-          <div style={{ padding: '24px' }}>
+        <Layout style={{ 
+          marginLeft: 0, 
+          transition: 'none',
+          marginTop: 112, // Height of the header (64px) + search (48px)
+          minHeight: 'calc(100vh - 112px)',
+          backgroundColor: themeConfig.token?.colorBgLayout || '#f5f5f5' 
+        }}>
+          <div style={{ 
+            // padding: '16px 24px',
+            maxWidth: '1440px',
+            width: '100%',
+            margin: '0 auto'
+          }}>
             <Routes>
               <Route
                 path="/"
