@@ -129,7 +129,7 @@ const FindLoads: React.FC = () => {
         width: '100%',
         maxWidth: '1200px',
         background: 'white',
-        padding: '24px',
+        // padding: '24px',
         borderRadius: '8px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
         margin: '0 auto',
@@ -334,7 +334,7 @@ const FindLoads: React.FC = () => {
                 {activeTab === 'findLoad' ? (
                     <>
                         <div style={{ padding: '10px 0 20px' }}>
-                            <Text strong style={{ fontSize: '16px', display: 'block', marginBottom: '16px' }}>Available Loads</Text>
+                            <Text strong style={{ fontSize: '16px', display: 'block', marginLeft: '16px' }}>Available Loads</Text>
                             <CardList
                                 filters={filters}
                                 onFilterChange={handleFilterChange}
@@ -343,7 +343,7 @@ const FindLoads: React.FC = () => {
                     </>
                 ) : (
                     <>
-                        <div style={{ padding: '10px 0 20px' }}>
+                        <div style={{ padding: '0 20px' }}>
                             <Text strong style={{ fontSize: '16px', display: 'block', marginBottom: '16px' }}>Available Trucks</Text>
                             <TruckCardList
                                 filters={filters}
