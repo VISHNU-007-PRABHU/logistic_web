@@ -1,11 +1,12 @@
 // src/app/ThemeContext.tsx
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
-import { ThemeConfig } from 'antd';
+import { ThemeConfig, theme } from 'antd';
 
 type ThemeContextType = {
   themeConfig: ThemeConfig;
   updateTheme: (updates: Partial<ThemeConfig>) => void;
   resetTheme: () => void;
+  toggleTheme: () => void;
 };
 
 const defaultTheme: ThemeConfig = {
@@ -14,6 +15,7 @@ const defaultTheme: ThemeConfig = {
     borderRadius: 6,
     colorBgContainer: '#ffffff',
     colorText: 'rgba(0, 0, 0, 0.88)',
+    colorBgLayout: '#f5f5f5',
   },
   components: {
     Layout: {
@@ -21,6 +23,34 @@ const defaultTheme: ThemeConfig = {
       bodyBg: '#f5f5f5',
     },
   },
+  algorithm: undefined,
+};
+
+const darkTheme: ThemeConfig = {
+  token: {
+    colorPrimary: '#177ddc',
+    colorBgContainer: '#1f1f1f',
+    colorBgLayout: '#141414',
+    colorText: 'rgba(255, 255, 255, 0.85)',
+    colorTextHeading: 'rgba(255, 255, 255, 0.85)',
+    colorBorder: '#424242',
+    colorBgElevated: '#1f1f1f',
+  },
+  components: {
+    Layout: {
+      headerBg: '#141414',
+      bodyBg: '#000000',
+    },
+    Card: {
+      colorBgContainer: '#1f1f1f',
+    },
+    Menu: {
+      darkItemBg: '#141414',
+      darkItemColor: 'rgba(255, 255, 255, 0.85)',
+      darkItemSelectedBg: '#177ddc',
+    },
+  },
+  algorithm: theme.darkAlgorithm,
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -45,6 +75,8 @@ const ensureColorString = (color: any): string => {
 };
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
   const [themeConfig, setThemeConfig] = useState<ThemeConfig>(() => {
     try {
       const savedTheme = localStorage.getItem('antd-theme');
@@ -87,13 +119,21 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const resetTheme = () => {
-    setThemeConfig(defaultTheme);
-    localStorage.setItem('antd-theme', JSON.stringify(defaultTheme));
+    const theme = isDarkMode ? darkTheme : defaultTheme;
+    setThemeConfig(theme);
+    localStorage.setItem('antd-theme', JSON.stringify(theme));
+  };
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    const newTheme = !isDarkMode ? darkTheme : defaultTheme;
+    setThemeConfig(newTheme);
+    localStorage.setItem('antd-theme', JSON.stringify(newTheme));
   };
 
   const value = useMemo(
-    () => ({ themeConfig, updateTheme, resetTheme }),
-    [themeConfig]
+    () => ({ themeConfig, updateTheme, resetTheme, toggleTheme }),
+    [themeConfig, isDarkMode]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

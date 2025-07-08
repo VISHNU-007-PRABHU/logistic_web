@@ -1,19 +1,28 @@
 // src/app/ThemeEditor.tsx
 import React, { useState } from 'react';
-import { Button, Drawer, Form, Input, Space } from 'antd';
+import { Button, Drawer, Form, Input, Space, ColorPicker } from 'antd';
 import { useTheme } from './ThemeContext';
 
 const ThemeEditor: React.FC = () => {
   const [open, setOpen] = useState(false);
   const { themeConfig, updateTheme, resetTheme } = useTheme();
   const [form] = Form.useForm();
+  const [color, setColor] = useState(themeConfig.token?.colorPrimary || '#1677ff');
 
   const showDrawer = () => {
+    const currentColor = themeConfig.token?.colorPrimary || '#1677ff';
+    setColor(currentColor);
     form.setFieldsValue({
-      primaryColor: themeConfig.token?.colorPrimary || '#1677ff',
+      primaryColor: currentColor,
       borderRadius: themeConfig.token?.borderRadius || 6,
     });
     setOpen(true);
+  };
+
+  const handleColorChange = (newColor: any) => {
+    const hexColor = typeof newColor === 'string' ? newColor : newColor.toHexString();
+    setColor(hexColor);
+    form.setFieldsValue({ primaryColor: hexColor });
   };
 
   // Set initial form values when the component mounts
@@ -88,24 +97,51 @@ const ThemeEditor: React.FC = () => {
             rules={[
               { 
                 required: true, 
-                message: 'Please input a color!' 
-              },
-              {
-                pattern: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-                message: 'Please enter a valid hex color code!'
+                message: 'Please select a color!' 
               }
             ]}
           >
-            <Input 
-              placeholder="#1677ff" 
-              prefix={<div style={{ 
-                width: 16, 
-                height: 16, 
-                backgroundColor: form.getFieldValue('primaryColor') || '#1677ff',
-                borderRadius: 4,
-                marginRight: 8
-              }} />} 
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ColorPicker
+                value={color}
+                onChange={handleColorChange}
+                onChangeComplete={handleColorChange}
+                presets={[{
+                  label: 'Recommended',
+                  colors: [
+                    '#1677ff', // Default blue
+                    '#52c41a', // Green
+                    '#faad14', // Gold
+                    '#f5222d', // Red
+                    '#722ed1', // Purple
+                    '#13c2c2', // Cyan
+                    '#eb2f96', // Magenta
+                    '#fa8c16'  // Orange
+                  ],
+                }]}
+                showText
+                style={{ verticalAlign: 'middle' }}
+              />
+              <Input 
+                placeholder="#1677ff" 
+                value={color}
+                onChange={(e) => {
+                  const newColor = e.target.value;
+                  setColor(newColor);
+                  form.setFieldsValue({ primaryColor: newColor });
+                }}
+                style={{ flex: 1 }}
+                prefix={
+                  <div style={{ 
+                    width: 16, 
+                    height: 16, 
+                    backgroundColor: color,
+                    borderRadius: 4,
+                    marginRight: 8
+                  }} />
+                }
+              />
+            </div>
           </Form.Item>
           <Form.Item 
             name="borderRadius" 

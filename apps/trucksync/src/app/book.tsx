@@ -15,7 +15,9 @@ import {
     Layout,
     Affix,
     Tabs,
-    Divider
+    Divider,
+    Grid,
+    Drawer
 } from 'antd';
 import {
     PieChartOutlined,
@@ -27,12 +29,12 @@ import {
     EnvironmentOutlined,
     CalendarOutlined,
     TruckOutlined,
-    ArrowRightOutlined,
     ShoppingCartOutlined,
     CarOutlined
 } from '@ant-design/icons';
 import TruckCardList from './TruckCardList';
 import CardList from './CardList';
+import truckImage from '../assets/truck.webp';
 
 const { Title, Text } = Typography;
 
@@ -86,6 +88,7 @@ interface ListComponentProps {
 
 const FindLoads: React.FC = () => {
     const [activeTab, setActiveTab] = useState('findLoad');
+    const [drawerVisible, setDrawerVisible] = useState(false);
     const [filters, setFilters] = useState<FilterState>({
         pickupLocation: null,
         dropLocation: null,
@@ -98,6 +101,7 @@ const FindLoads: React.FC = () => {
     const {
         token: { colorBgContainer, colorPrimary, colorBgLayout },
     } = theme.useToken();
+    const screens = Grid.useBreakpoint();
 
     const handleFilterChange = (key: keyof FilterState, value: any) => {
         setFilters(prev => ({
@@ -109,10 +113,13 @@ const FindLoads: React.FC = () => {
     const handleSearch = () => {
         // Trigger search with current filters
         console.log('Searching with filters:', filters);
+        if (screens.xs) {
+            setDrawerVisible(false);
+        }
     };
 
     const bannerStyle: React.CSSProperties = {
-        background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGV1fDB8fHx8&auto=format&fit=crop&w=2070&q=80')`,
+        background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${truckImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '300px',
@@ -127,17 +134,173 @@ const FindLoads: React.FC = () => {
 
     const filterCardStyle: React.CSSProperties = {
         width: '100%',
-        maxWidth: '1200px',
         background: 'white',
-        // padding: '24px',
         borderRadius: '8px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        margin: '0 auto',
     };
+
+    const renderFilters = () => (
+        <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            type="card"
+            items={[
+                {
+                    key: 'findLoad',
+                    label: (
+                        <span>
+                            <ShoppingCartOutlined />
+                            <span>Find Load</span>
+                        </span>
+                    ),
+                    children: (
+                        <div style={{ padding: '24px' }}>
+                            <Row gutter={[16, 16]}>
+                                <Col span={24}>
+                                    <Text strong style={{ fontSize: '16px' }}>Search Filters</Text>
+                                </Col>
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <EnvironmentOutlined /> Pickup Location
+                                    </Text>
+                                    <Input
+                                        placeholder="Enter city or location"
+                                        value={filters.pickupLocation || ''}
+                                        onChange={(e) => handleFilterChange('pickupLocation', e.target.value)}
+                                    />
+                                </Col>
+
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <EnvironmentOutlined /> Drop Location
+                                    </Text>
+                                    <Input
+                                        placeholder="Enter city or location"
+                                        value={filters.dropLocation || ''}
+                                        onChange={(e) => handleFilterChange('dropLocation', e.target.value)}
+                                    />
+                                </Col>
+
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <TruckOutlined /> Truck Type
+                                    </Text>
+                                    <Select
+                                        placeholder="Select truck type"
+                                        style={{ width: '100%' }}
+                                        value={filters.truckType || 'all'}
+                                        onChange={(value) => handleFilterChange('truckType', value)}
+                                    >
+                                        <Option value="all">All Types</Option>
+                                        <Option value="open">Open Body</Option>
+                                        <Option value="closed">Closed Body</Option>
+                                        <Option value="container">Container</Option>
+                                        <Option value="trailer">Trailer</Option>
+                                    </Select>
+                                </Col>
+
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <CalendarOutlined /> Date
+                                    </Text>
+                                    <RangePicker
+                                        style={{ width: '100%' }}
+                                        value={filters.dateRange}
+                                        onChange={(dates) => handleFilterChange('dateRange', dates)}
+                                    />
+                                </Col>
+
+                                <Col xs={24} style={{ textAlign: 'right', marginTop: '8px' }}>
+                                    <Button
+                                        type="primary"
+                                        icon={<SearchOutlined />}
+                                        onClick={handleSearch}
+                                        style={{ width: '120px' }}
+                                    >
+                                        Find Loads
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </div>
+                    )
+                },
+                {
+                    key: 'findTruck',
+                    label: (
+                        <span>
+                            <CarOutlined />
+                            <span>Find Truck</span>
+                        </span>
+                    ),
+                    children: (
+                        <div style={{ padding: '24px' }}>
+                            <Row gutter={[16, 16]}>
+                                <Col span={24}>
+                                    <Text strong style={{ fontSize: '16px' }}>Search Filters</Text>
+                                </Col>
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <EnvironmentOutlined /> Current Location
+                                    </Text>
+                                    <Input
+                                        placeholder="Enter city or location"
+                                        value={filters.currentLocation || ''}
+                                        onChange={(e) => handleFilterChange('currentLocation', e.target.value)}
+                                    />
+                                </Col>
+
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <CarOutlined /> Truck Type
+                                    </Text>
+                                    <Select
+                                        placeholder="Select truck type"
+                                        style={{ width: '100%' }}
+                                        value={filters.availableTruckType}
+                                        onChange={(value) => handleFilterChange('availableTruckType', value)}
+                                    >
+                                        <Option value="all">All Types</Option>
+                                        <Option value="open">Open Body</Option>
+                                        <Option value="closed">Closed Body</Option>
+                                        <Option value="container">Container</Option>
+                                        <Option value="trailer">Trailer</Option>
+                                    </Select>
+                                </Col>
+
+                                <Col xs={24} sm={12} md={6}>
+                                    <Text strong style={{ display: 'block', marginBottom: '8px' }}>
+                                        <CalendarOutlined /> Available From
+                                    </Text>
+                                    <DatePicker
+                                        style={{ width: '100%' }}
+                                        placeholder="Select available date"
+                                        value={filters.availableFrom}
+                                        onChange={(date) => handleFilterChange('availableFrom', date)}
+                                    />
+                                </Col>
+
+                                <Col xs={24} style={{ textAlign: 'right', marginTop: '8px' }}>
+                                    <Button
+                                        type="primary"
+                                        icon={<SearchOutlined />}
+                                        onClick={handleSearch}
+                                        style={{ width: '120px' }}
+                                    >
+                                        Find Trucks
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </div>
+                    )
+                }
+            ]}
+        />
+    );
 
     return (
         <div>
             {/* Banner Section */}
+            {!(screens.xs) && (
             <div style={bannerStyle}>
                 <Title level={2} style={{ color: 'white', marginBottom: '16px' }}>
                     <Space size="middle">
@@ -145,214 +308,64 @@ const FindLoads: React.FC = () => {
                         Find Online Load Booking in Nashik, Maharashtra
                     </Space>
                 </Title>
-                <Text style={{ fontSize: '18px', maxWidth: '800px' }}>
+                <Text style={{ fontSize: '18px', maxWidth: '800px', textAlign: 'center' }}>
                     Connect with reliable transporters and shippers across India. Get the best rates for your cargo.
                 </Text>
             </div>
+            )}
 
-            {/* Filter Card */}
-            <div style={{ ...filterCardStyle, margin: '-40px auto 40px', position: 'relative', zIndex: 1 }}>
-                <Tabs
-                    activeKey={activeTab}
-                    onChange={setActiveTab}
-                    type="card"
-                    items={[
-                        {
-                            key: 'findLoad',
-                            label: (
-                                <span>
-                                    <ShoppingCartOutlined />
-                                    <span>Find Load</span>
-                                </span>
-                            ),
-                            children: (
-                                <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
-                                    <Col span={24}>
-                                        <Text strong style={{ fontSize: '16px' }}>Search Filters</Text>
-                                    </Col>
-                                    <Col xs={24} sm={12} md={6}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <EnvironmentOutlined /> Pickup Location
-                                        </Text>
-                                        <Select
-                                            placeholder="Select pickup location"
-                                            style={{ width: '100%' }}
-                                            suffixIcon={<SearchOutlined />}
-                                            value={filters.pickupLocation}
-                                            onChange={(value) => handleFilterChange('pickupLocation', value)}
-                                        >
-                                            <Option value="nashik">Nashik, Maharashtra</Option>
-                                            <Option value="mumbai">Mumbai, Maharashtra</Option>
-                                            <Option value="pune">Pune, Maharashtra</Option>
-                                            <Option value="delhi">Delhi</Option>
-                                            <Option value="bangalore">Bangalore, Karnataka</Option>
-                                        </Select>
-                                    </Col>
+            {/* Filters and Content */}
+            <div style={{ width: '100%', maxWidth: '1200px', margin: screens.xs ? '0' : '-40px auto 40px', position: 'relative', zIndex: 1 }}>
+                {!screens.xs && (
+                    <div style={{ ...filterCardStyle, marginBottom: '24px' }}>
+                        {renderFilters()}
+                    </div>
+                )}
 
-                                    <Col xs={24} sm={12} md={6}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <EnvironmentOutlined /> Drop Location
-                                        </Text>
-                                        <Select
-                                            placeholder="Select drop location"
-                                            style={{ width: '100%' }}
-                                            suffixIcon={<SearchOutlined />}
-                                            value={filters.dropLocation}
-                                            onChange={(value) => handleFilterChange('dropLocation', value)}
-                                        >
-                                            <Option value="delhi">Delhi</Option>
-                                            <Option value="mumbai">Mumbai, Maharashtra</Option>
-                                            <Option value="bangalore">Bangalore, Karnataka</Option>
-                                            <Option value="hyderabad">Hyderabad, Telangana</Option>
-                                            <Option value="chennai">Chennai, Tamil Nadu</Option>
-                                        </Select>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={4}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <CarOutlined /> Truck Type
-                                        </Text>
-                                        <Select
-                                            placeholder="Select truck type"
-                                            style={{ width: '100%' }}
-                                            value={filters.truckType}
-                                            onChange={(value) => handleFilterChange('truckType', value)}
-                                        >
-                                            <Option value="open">Open Body</Option>
-                                            <Option value="closed">Closed Body</Option>
-                                            <Option value="container">Container</Option>
-                                            <Option value="trailer">Trailer</Option>
-                                        </Select>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={4}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <CalendarOutlined /> Loading Date
-                                        </Text>
-                                        <DatePicker
-                                            style={{ width: '100%' }}
-                                            placeholder="Select date"
-                                            value={filters.dateRange?.[0]}
-                                            onChange={(date) => handleFilterChange('dateRange', [date, filters.dateRange?.[1] || null])}
-                                        />
-                                    </Col>
-
-                                    <Col xs={24} style={{ textAlign: 'right', marginTop: '8px' }}>
-                                        <Button
-                                            type="primary"
-                                            icon={<SearchOutlined />}
-                                            onClick={handleSearch}
-                                            style={{ width: '120px' }}
-                                        >
-                                            Search Loads
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            )
-                        },
-                        {
-                            key: 'findTruck',
-                            label: (
-                                <span>
-                                    <TruckOutlined />
-                                    <span>Find Truck</span>
-                                </span>
-                            ),
-                            children: (
-                                <Row gutter={[16, 16]} style={{ marginTop: '16px' }}>
-                                    <Col span={24}>
-                                        <Text strong style={{ fontSize: '16px' }}>Search Filters</Text>
-                                    </Col>
-                                    <Col xs={24} sm={12} md={6}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <EnvironmentOutlined /> Current Location
-                                        </Text>
-                                        <Select
-                                            placeholder="Select current location"
-                                            style={{ width: '100%' }}
-                                            suffixIcon={<SearchOutlined />}
-                                            value={filters.currentLocation}
-                                            onChange={(value) => handleFilterChange('currentLocation', value)}
-                                        >
-                                            <Option value="mumbai">Mumbai, Maharashtra</Option>
-                                            <Option value="pune">Pune, Maharashtra</Option>
-                                            <Option value="delhi">Delhi</Option>
-                                            <Option value="bangalore">Bangalore, Karnataka</Option>
-                                            <Option value="hyderabad">Hyderabad, Telangana</Option>
-                                        </Select>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={6}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <CarOutlined /> Truck Type
-                                        </Text>
-                                        <Select
-                                            placeholder="Select truck type"
-                                            style={{ width: '100%' }}
-                                            value={filters.availableTruckType}
-                                            onChange={(value) => handleFilterChange('availableTruckType', value)}
-                                        >
-                                            <Option value="all">All Types</Option>
-                                            <Option value="open">Open Body</Option>
-                                            <Option value="closed">Closed Body</Option>
-                                            <Option value="container">Container</Option>
-                                            <Option value="trailer">Trailer</Option>
-                                        </Select>
-                                    </Col>
-
-                                    <Col xs={24} sm={12} md={6}>
-                                        <Text strong style={{ display: 'block', marginBottom: '8px' }}>
-                                            <CalendarOutlined /> Available From
-                                        </Text>
-                                        <DatePicker
-                                            style={{ width: '100%' }}
-                                            placeholder="Select available date"
-                                            value={filters.availableFrom}
-                                            onChange={(date) => handleFilterChange('availableFrom', date)}
-                                        />
-                                    </Col>
-
-                                    <Col xs={24} style={{ textAlign: 'right', marginTop: '8px' }}>
-                                        <Button
-                                            type="primary"
-                                            icon={<SearchOutlined />}
-                                            onClick={handleSearch}
-                                            style={{ width: '120px' }}
-                                        >
-                                            Find Trucks
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            )
-                        }
-                    ]}
-                />
-            </div>
-
-            <div style={{ ...filterCardStyle, margin: '40px auto 40px', position: 'relative', zIndex: 1 }}>
-
-                {activeTab === 'findLoad' ? (
-                    <>
-                        <div style={{ padding: '10px 0 20px' }}>
-                            <Text strong style={{ fontSize: '16px', display: 'block', marginLeft: '16px' }}>Available Loads</Text>
+                <div style={filterCardStyle}>
+                    {activeTab === 'findLoad' ? (
+                        <Space direction="vertical" style={{ width: '100%' }} size="large">
+                            <Text strong style={{ fontSize: '16px', padding: screens.xs ? '16px 16px 0' : '24px 24px 0' }}>Available Loads</Text>
                             <CardList
                                 filters={filters}
                                 onFilterChange={handleFilterChange}
                             />
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        <div style={{ padding: '0 20px' }}>
-                            <Text strong style={{ fontSize: '16px', display: 'block', marginBottom: '16px' }}>Available Trucks</Text>
+                        </Space>
+                    ) : (
+                        <Space direction="vertical" style={{ width: '100%' }} size="large">
+                            <Text strong style={{ fontSize: '16px', padding: screens.xs ? '16px 16px 0' : '24px 24px 0' }}>Available Trucks</Text>
                             <TruckCardList
                                 filters={filters}
                                 onFilterChange={handleFilterChange}
                             />
-                        </div>
-                    </>
-                )}
+                        </Space>
+                    )}
                 </div>
+            </div>
+
+            {/* Mobile Affixed Button and Drawer */}
+            {screens.xs && (
+                <>
+                    <Affix offsetBottom={0} style={{ zIndex: 10 }}>
+                        <div style={{ padding: '16px', textAlign: 'center', background: 'white', boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)' }}>
+                            <Button type="primary" onClick={() => setDrawerVisible(true)} block>
+                                <SearchOutlined /> Show Filters
+                            </Button>
+                        </div>
+                    </Affix>
+                    <Drawer
+                        title="Filters"
+                        placement="bottom"
+                        onClose={() => setDrawerVisible(false)}
+                        open={drawerVisible}
+                        height="auto"
+                        bodyStyle={{ padding: 0 }}
+                        zIndex={20}
+                    >
+                        {renderFilters()}
+                    </Drawer>
+                </>
+            )}
         </div>
     );
 };

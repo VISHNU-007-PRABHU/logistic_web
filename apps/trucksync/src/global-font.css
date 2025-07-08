@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+html, body {
+  font-family: 'Poppins', 'Inter', 'Montserrat', Arial, sans-serif !important;
+  font-size: 15px;
+  color: #222;
+  background: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-layout, .ant-card, .ant-menu, .ant-typography, .ant-btn, .ant-form, .ant-list, .ant-checkbox, .ant-tag, .ant-result {
+  font-family: 'Poppins', 'Inter', 'Montserrat', Arial, sans-serif !important;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6, .ant-typography {
+  font-family: 'Poppins', 'Inter', 'Montserrat', Arial, sans-serif !important;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.ant-menu-item {
+  font-size: 15px !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.ant-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.ant-card-head-title {
+  font-size: 16px !important;
+  font-weight: 600;
+}
+
+.ant-card-body {
+  font-size: 15px !important;
+  line-height: 1.6;
+}
+
+.ant-btn {
+  font-size: 15px !important;
+  font-weight: 500;
+  height: auto;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.ant-input, .ant-select-selector {
+  font-family: 'Poppins', 'Inter', 'Montserrat', Arial, sans-serif !important;
+  font-size: 15px !important;
+  border-radius: 6px !important;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    font-size: 15px;
+  }
+  
+  .ant-menu-item, .ant-card-head-title, .ant-card-body, .ant-btn {
+    font-size: 15px !important;
+  }
+  
+  .ant-card {
+    margin: 8px;
+  }
+}

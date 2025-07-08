@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Typography, Button, Space, Skeleton,Card, message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { Typography, Button, Space, Card, message, Tag, Skeleton } from 'antd';
 import { 
     EnvironmentOutlined, 
     CarOutlined, 
     ClockCircleOutlined,
     ArrowRightOutlined,
     CheckCircleOutlined,
-    InfoCircleOutlined,
-    StarFilled
+    InfoCircleOutlined
 } from '@ant-design/icons';
 import { FilterState } from './book';
 import CustomCard from './CustomCard';
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 export interface LoadItem {
   id: string;
@@ -38,11 +38,11 @@ interface CardListProps {
   onFilterChange: (key: keyof FilterState, value: any) => void;
 }
 
-const CONTAINER_HEIGHT = 600;
 const PAGE_SIZE = 9;
 const COLUMNS = 3;
 
 const CardList: React.FC<CardListProps> = ({ filters, onFilterChange }) => {
+    const navigate = useNavigate();
     const [data, setData] = useState<LoadItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -56,8 +56,6 @@ const CardList: React.FC<CardListProps> = ({ filters, onFilterChange }) => {
             { city: 'Mumbai', state: 'Maharashtra', address: 'Andheri East' },
             { city: 'Delhi', state: 'Delhi', address: 'Gurugram' }
         ];
-        const truckTypes = ['LCV', 'Trailer', 'Container', 'Flatbed'];
-        
         return Array.from({ length: count }, (_, i) => {
             const from = locations[Math.floor(Math.random() * locations.length)];
             const to = locations.filter(loc => loc.city !== from.city)[Math.floor(Math.random() * (locations.length - 1))];
@@ -116,28 +114,24 @@ const CardList: React.FC<CardListProps> = ({ filters, onFilterChange }) => {
     // Filter data based on active filters
     const filteredData = useMemo(() => {
         return data.filter(item => {
-            if (filters.pickupLocation && item.pickupLocation !== filters.pickupLocation) return false;
-            if (filters.dropLocation && item.dropLocation !== filters.dropLocation) return false;
-            // Add more filter conditions as needed
+            // Example filtering logic - adapt as needed
+            if (filters.pickupLocation && !item.pickupLocation.toLowerCase().includes(filters.pickupLocation.toLowerCase())) {
+                return false;
+            }
+            if (filters.dropLocation && !item.dropLocation.toLowerCase().includes(filters.dropLocation.toLowerCase())) {
+                return false;
+            }
             return true;
         });
     }, [data, filters]);
 
-    // Group filtered data into rows based on COLUMNS
-    const rows = useMemo(() => {
-        const result = [];
-        for (let i = 0; i < filteredData.length; i += COLUMNS) {
-            result.push(data.slice(i, i + COLUMNS));
-        }
-        return result;
-    }, [filteredData, data, COLUMNS]);
-
-    // Loading state
-    if (loading && data.length === 0) {
+    if (loading && page === 1) {
         return (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px', padding: '16px' }}>
-                {Array(6).fill(0).map((_, i) => (
-                    <Card key={i} style={{ width: '100%' }} loading={true} />
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLUMNS}, 1fr)`, gap: '16px' }}>
+                {Array.from({ length: 6 }).map((_, index) => (
+                    <Card key={index}>
+                        <Skeleton active />
+                    </Card>
                 ))}
             </div>
         );
@@ -243,7 +237,7 @@ const CardList: React.FC<CardListProps> = ({ filters, onFilterChange }) => {
                                 price={item.price}
                                 priceInfo={item.priceInfo}
                                 buttonText="Book Now"
-                                onButtonClick={() => message.info('Booking initiated')}
+                                onButtonClick={() => navigate('/book-flow')}
                             />
                         </div>
                     </CustomCard.Container>
