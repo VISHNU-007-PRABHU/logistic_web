@@ -44,7 +44,7 @@ import { useTheme } from './ThemeContext';
 import ThemeEditor from './ThemeEditor';
 
 import CustomFloaterButton from './CustomFloater';
-import FindLoads from './book';
+import Find from './book';
 import BookFlow from './book-flow';
 import TripHistoryPage from './TripHistoryPage';
 import TruckOwnerHomePage from './TruckOwnerHomePage';
@@ -52,7 +52,7 @@ import TruckOwnerHome from './TruckOwnerHome';
 import TripDetailsPage from './TripDetailsPage';
 import RatingsSupportPage from './RatingsSupportPage';
 
-const { Header, Sider } = Layout;
+const { Header } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -81,8 +81,6 @@ const items: MenuItem[] = [
 ];
 
 const AppContent: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const navigateToChat = () => {
     navigate('/chat');
@@ -119,7 +117,7 @@ const AppContent: React.FC = () => {
   
   const notificationMenu = (
     <div style={{ width: 300, padding: 0, borderRadius: 8, overflow: 'hidden' }}>
-      <div style={{ 
+      {/* <div style={{ 
         padding: '12px 16px', 
         borderBottom: '1px solid #f0f0f0', 
         fontWeight: 600,
@@ -140,7 +138,7 @@ const AppContent: React.FC = () => {
         >
           Messages
         </Button>
-      </div>
+      </div> */}
       <div style={{ maxHeight: 400, overflowY: 'auto' }}>
         {notifications.length > 0 ? (
           notifications.map(notification => (
@@ -201,24 +199,106 @@ const AppContent: React.FC = () => {
     </div>
   );
 
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setCollapsed(true);
-      }
-    };
-
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-    
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
-
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+  // Convert notificationMenu to antd menu object for Dropdown
+  const notificationMenuObj = {
+    items: [
+      {
+        key: 'messages',
+        label: (
+          <div style={{ 
+            padding: '12px 16px', 
+            borderBottom: '1px solid #f0f0f0', 
+            fontWeight: 600,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: '#fff'
+          }}>
+            <span>Notifications</span>
+            <Button 
+              type="text" 
+              size="small" 
+              icon={<MessageOutlined />} 
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToChat();
+              }}
+            >
+              Messages
+            </Button>
+          </div>
+        ),
+      },
+      {
+        key: 'list',
+        label: (
+          <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+            {notifications.length > 0 ? (
+              notifications.map(notification => (
+                <div 
+                  key={notification.id} 
+                  style={getNotificationItemStyle(notification.read)}
+                >
+                  <div style={{ 
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 12
+                  }}>
+                    <div style={{ 
+                      width: 8, 
+                      height: 8, 
+                      backgroundColor: !notification.read ? '#1890ff' : 'transparent',
+                      borderRadius: '50%',
+                      marginTop: 6
+                    }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ 
+                        fontWeight: 500,
+                        marginBottom: 4,
+                        color: !notification.read ? '#000' : 'rgba(0,0,0,0.85)'
+                      }}>
+                        {notification.title}
+                      </div>
+                      <div style={{ 
+                        fontSize: 12, 
+                        color: 'rgba(0,0,0,0.45)'
+                      }}>
+                        {notification.time}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ 
+                padding: 24, 
+                textAlign: 'center',
+                color: 'rgba(0,0,0,0.45)'
+              }}>
+                No new notifications
+              </div>
+            )}
+          </div>
+        ),
+      },
+      ...(notifications.length > 0
+        ? [{
+            key: 'footer',
+            label: (
+              <div style={{ 
+                padding: '8px 16px', 
+                textAlign: 'center',
+                borderTop: '1px solid #f0f0f0',
+                backgroundColor: '#fafafa'
+              }}>
+                <Button type="link" size="small">View All Notifications</Button>
+              </div>
+            ),
+          }]
+        : []
+      ),
+    ]
   };
-
 
   return (
     <ConfigProvider theme={{
@@ -232,147 +312,57 @@ const AppContent: React.FC = () => {
         colorTextHeading: '#18181a',
       }
     }}>
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider 
-        collapsed={collapsed}
-        collapsible
-        breakpoint="md"
-        onBreakpoint={(broken) => {
-          setIsMobile(broken);
-          setCollapsed(broken);
-        }}
-        trigger={null}
-        width={220}
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          zIndex: 10,
-          background: 'linear-gradient(135deg, #001529 80%, #1890ff 100%)',
-          borderTopRightRadius: 24,
-          borderBottomRightRadius: 24,
-          boxShadow: '2px 0 12px rgba(24,144,255,0.08)',
-          display: isMobile ? (collapsed ? 'none' : 'block') : 'block'
-        }}
-      >
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'flex-start',
-          height: 56,
-          margin: '20px 0 20px 0',
-          paddingLeft: collapsed ? 0 : 24,
-          transition: 'all 0.2s',
-        }}>
-          <CrownOutlined style={{ fontSize: 32, color: '#ffd700', marginRight: collapsed ? 0 : 12, transition: 'margin 0.2s' }} />
-          {!collapsed && (
-            <span style={{
-              color: '#fff',
-              fontWeight: 700,
-              fontSize: 22,
-              letterSpacing: 1,
-              fontFamily: 'Montserrat, Inter, sans-serif',
-              textShadow: '0 2px 8px rgba(0,0,0,0.10)'
-            }}>
-              TruckSync
-            </span>
-          )}
-        </div>
-        <Menu 
-          theme="dark" 
-          selectedKeys={[location.pathname]}
-          mode="inline" 
-          items={items} 
-          onClick={({ key }) => navigate(key)}
-          style={{ padding: isMobile ? '0 8px' : '0' }}
-        />
-      </Sider>
-      {isMobile && !collapsed && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 200,
-            zIndex: 5,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}
-          onClick={() => setCollapsed(true)}
-        />
-      )}
-      <Layout style={{ 
-        marginLeft: isMobile ? 0 : (collapsed ? 80 : 200),
-        transition: 'margin-left 0.2s'
-      }}>
-        <Header style={{ 
-          padding: '0 24px', 
+      <Layout style={{ minHeight: '100vh' }}>
+        {/* Header with horizontal Menu */}
+        <Header style={{
+          padding: 0,
           background: themeConfig.token?.colorBgContainer || '#fff',
           position: 'sticky',
           top: 0,
           zIndex: 9,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-          height: 64,
-          borderBottom: `1px solid ${themeConfig.token?.colorBorderBg || '#f0f0f0'}`
+          height: 'auto',
+          borderBottom: `1px solid ${themeConfig.token?.colorBorderBg || '#f0f0f0'}`,
+          display: 'flex',
+          flexDirection: 'column',
         }}>
-          <div style={{ 
-            display: 'flex', 
+          <div style={{
+            display: 'flex',
             alignItems: 'center',
-            flex: 1,
-            maxWidth: 800,
-            margin: '0 auto',
-            width: '100%'
+            justifyContent: 'space-between',
+            padding: '0 24px',
+            height: 64,
           }}>
-            {isMobile && (
-              <Button
-                type="text"
-                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                onClick={toggleSidebar}
-                style={{
-                  fontSize: '18px',
-                  width: 48,
-                  height: 48,
-                  marginRight: 8,
-                  color: themeConfig.token?.colorText
-                }}
-              />
-            )}
-            
-            <div style={{ 
-              position: 'relative', 
-              flex: 1,
-              maxWidth: 600,
-              margin: isMobile ? '0 8px' : '0 24px 0 16px'
-            }}>
-              <Search
-                placeholder="Search for loads, trucks, or locations..."
-                allowClear
-                onSearch={value => console.log('Search:', value)}
-                style={{ 
-                  width: '100%',
-                  borderRadius: 8,
-                  backgroundColor: themeConfig.token?.colorBgContainer
-                }}
-                size="large"
-                enterButton={
-                  <Button 
-                    type="primary" 
-                    style={{ 
-                      background: themeConfig.token?.colorPrimary,
-                      borderColor: themeConfig.token?.colorPrimary
-                    }}
-                  >
-                    <SearchOutlined />
-                  </Button>
-                }
-              />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <CrownOutlined style={{ fontSize: 32, color: '#ffd700' }} />
+              <span style={{
+                color: '#18181a',
+                fontWeight: 700,
+                fontSize: 22,
+                letterSpacing: 1,
+                fontFamily: 'Montserrat, Inter, sans-serif',
+                textShadow: '0 2px 8px rgba(0,0,0,0.10)'
+              }}>
+                TruckSync
+              </span>
             </div>
-            
-            <Space size="middle" style={{ marginLeft: 'auto' }}>
+            {/* Horizontal Menu */}
+            <Menu
+              mode="horizontal"
+              selectedKeys={[location.pathname]}
+              items={items}
+              onClick={({ key }) => navigate(key)}
+              style={{
+                flex: 1,
+                minWidth: 0,
+                borderBottom: 'none',
+                background: 'transparent',
+                fontWeight: 600,
+                fontSize: 16,
+                marginLeft: 32,
+              }}
+            />
+            <Space size="middle">
               <Button 
                 type="text" 
                 icon={darkMode ? <BulbFilled /> : <BulbOutlined />} 
@@ -385,9 +375,8 @@ const AppContent: React.FC = () => {
                   justifyContent: 'center'
                 }}
               />
-              
               <Dropdown 
-                overlay={notificationMenu} 
+                menu={notificationMenuObj}
                 trigger={['click']} 
                 placement="bottomRight"
                 overlayStyle={{ marginTop: 10 }}
@@ -425,7 +414,6 @@ const AppContent: React.FC = () => {
                   )}
                 </Button>
               </Dropdown>
-              
               <Button 
                 type="primary" 
                 icon={<PlusOutlined />} 
@@ -433,162 +421,168 @@ const AppContent: React.FC = () => {
                 style={{ 
                   height: 40,
                   fontWeight: 500,
-                  display: isMobile ? 'none' : 'flex',
                   alignItems: 'center',
                   gap: 6
                 }}
               >
                 New Booking
               </Button>
-              
-              {/* Mobile new booking button */}
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />} 
-                onClick={() => navigate('/book')}
-                style={{ 
-                  width: 40,
-                  height: 40,
-                  display: !isMobile ? 'none' : 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              />
             </Space>
           </div>
+          {/* Optional: Sub-header with search */}
+          <div style={{
+            padding: '12px 24px',
+            background: '#fafbfc',
+            borderTop: `1px solid ${themeConfig.token?.colorBorderBg || '#f0f0f0'}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Search
+              placeholder="Search for loads, trucks, or locations..."
+              allowClear
+              onSearch={value => console.log('Search:', value)}
+              style={{ 
+                width: '100%',
+                maxWidth: 600,
+                borderRadius: 8,
+                backgroundColor: themeConfig.token?.colorBgContainer
+              }}
+              size="large"
+              enterButton={
+                <Button 
+                  type="primary" 
+                  style={{ 
+                    background: themeConfig.token?.colorPrimary,
+                    borderColor: themeConfig.token?.colorPrimary
+                  }}
+                >
+                  <SearchOutlined />
+                </Button>
+              }
+            />
+          </div>
         </Header>
-        <div style={{ padding: isMobile ? '16px' : '24px' }}>
-      <Routes>
-          <Route
-            path="/"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <WelcomePage />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <UserProfilePage />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <SignUpPage />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/booking"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <BookingPage />
-              </AuthWrapper>
-            }
-          />
-             <Route
-            path="/history"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <TripHistoryPage role={userRole} />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/book"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <FindLoads />
-              </AuthWrapper>
-            }
-          />
-           <Route
-            path="/truck"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <FindLoads />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/book-flow"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <BookFlow />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/truck"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <WelcomePage />
-              </AuthWrapper>
-            }
-          />
+        <Layout style={{ marginLeft: 0, transition: 'none' }}>
+          <div style={{ padding: '24px' }}>
+            <Routes>
               <Route
-            path="/trip/:id"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <TripDetailsPage />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/owner"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <TruckOwnerHome />
-              </AuthWrapper>
-            }
-          />
-           <Route
-            path="/rating"
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <RatingsSupportPage />
-              </AuthWrapper>
-            }
-          />
-          <Route 
-            path="/chat" 
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <ChatPage />
-              </AuthWrapper>
-            } 
-          />
-          <Route 
-            path="/truck/bid/:id" 
-            element={
-              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
-                <TruckBiddingPage />
-              </AuthWrapper>
-            } 
-          />
-        </Routes>
-        </div>
+                path="/"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <WelcomePage />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <UserProfilePage />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <SignUpPage />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/booking"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <BookingPage />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/history"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <TripHistoryPage role={userRole} />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/book"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <Find mode="findLoad" />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/truck"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <Find mode="findTruck" />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/book-flow"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <BookFlow />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/trip/:id"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <TripDetailsPage />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/owner"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <TruckOwnerHome />
+                  </AuthWrapper>
+                }
+              />
+              <Route
+                path="/rating"
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <RatingsSupportPage />
+                  </AuthWrapper>
+                }
+              />
+              <Route 
+                path="/chat" 
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <ChatPage />
+                  </AuthWrapper>
+                } 
+              />
+              <Route 
+                path="/truck/bid/:id" 
+                element={
+                  <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                    <TruckBiddingPage />
+                  </AuthWrapper>
+                } 
+              />
+            </Routes>
+          </div>
+        </Layout>
+        <ThemeEditor />
       </Layout>
-    </Layout>
-    
-    
-    {/* <CustomFloaterButton /> */}
-    <ThemeEditor />
-  </ConfigProvider>
+    </ConfigProvider>
   );
 };
 
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <ConfigProvider>
         <AppContent />
-      </ConfigProvider>
     </ThemeProvider>
   );
 };
