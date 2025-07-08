@@ -1,6 +1,7 @@
 import React from 'react';
-import { EnvironmentOutlined, CarOutlined, ClockCircleOutlined, UserOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, CarOutlined, ClockCircleOutlined, UserOutlined, ShareAltOutlined, MessageOutlined } from '@ant-design/icons';
 import { Card, Typography, Button, Avatar, Space, Tag, Divider } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const { Text: AntdText, Title } = Typography;
 
@@ -16,6 +17,7 @@ interface TruckCardProps {
   companyName?: string;
   companyType?: string;
   rating?: string;
+  id?: string;
 }
 
 const TruckCard: React.FC<TruckCardProps> = ({
@@ -29,8 +31,14 @@ const TruckCard: React.FC<TruckCardProps> = ({
   length = '20 feet',
   companyName = 'Lalitha Mini Transport',
   companyType = 'Truck Owner / Driver',
-  rating = '3.3'
+  rating = '3.3',
+  id = '1' // Default ID for demo purposes
 }) => {
+  const navigate = useNavigate();
+  
+  const handleContactClick = () => {
+    navigate(`/truck/bid/${id}`);
+  };
   return (
     <Card
       style={{ width: '100%', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
@@ -102,7 +110,14 @@ const TruckCard: React.FC<TruckCardProps> = ({
             <span style={{ color: '#faad14', marginRight: 4 }}>★</span> {rating}
           </div>
         </div>
-        <Button type="primary" shape="round">Bid Now</Button>
+        <Button 
+          type="primary" 
+          shape="round"
+          icon={<MessageOutlined />}
+          onClick={handleContactClick}
+        >
+          Contact
+        </Button>
       </div>
     </Card>
   );

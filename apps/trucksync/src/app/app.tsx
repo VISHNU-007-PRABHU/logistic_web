@@ -28,7 +28,8 @@ import {
 } from 'antd';
 import { ThemeProvider } from './ThemeContext';
 import ChatPanel from './ChatPanel';
-import ChatPage from './ChatPage'; 
+import ChatPage from './ChatPage';
+import TruckBiddingPage from './TruckBiddingPage'; 
 const { Search } = Input;
 
 import type { MenuProps } from 'antd';
@@ -559,6 +560,14 @@ const AppContent: React.FC = () => {
             element={
               <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
                 <ChatPage />
+              </AuthWrapper>
+            } 
+          />
+          <Route 
+            path="/truck/bid/:id" 
+            element={
+              <AuthWrapper role={userRole} allowedRoles={['admin', 'owner']}>
+                <TruckBiddingPage />
               </AuthWrapper>
             } 
           />

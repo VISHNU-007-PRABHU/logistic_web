@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Button, Card, Space, Tag, Typography, Avatar, Badge } from 'antd';
-import { 
-    EnvironmentOutlined, 
-    CarOutlined, 
-    StarFilled,
-    ClockCircleOutlined
-} from '@ant-design/icons';
+import { Button, Card, Space, Tag, Typography } from 'antd';
 import { FilterState } from './book';
+import TruckCard from './TruckCard';
 
 const { Text, Title } = Typography;
 
@@ -94,7 +89,9 @@ const TruckCardList: React.FC<TruckCardListProps> = ({ filters, onFilterChange }
         return (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px', padding: '16px' }}>
                 {Array(6).fill(0).map((_, i) => (
-                    <Card key={i} style={{ width: '100%' }} loading={true} />
+                    <Card key={i} style={{ width: '100%' }} loading={true}>
+                        <Card.Meta />
+                    </Card>
                 ))}
             </div>
         );
@@ -124,48 +121,21 @@ const TruckCardList: React.FC<TruckCardListProps> = ({ filters, onFilterChange }
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
                 {filteredData.map((item) => (
-                    <Card 
+                    <TruckCard
                         key={item.id}
-                        hoverable
-                        style={{ width: '100%' }}
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                            <div>
-                                <Text strong style={{ fontSize: '16px' }}>{item.truckType}</Text>
-                                <div style={{ color: '#666' }}>{item.truckNumber}</div>
-                            </div>
-                            {item.isVerified && (
-                                <Badge.Ribbon text="Verified" color="green" />
-                            )}
-                        </div>
-                        
-                        <Space direction="vertical" size={8} style={{ width: '100%', marginBottom: 16 }}>
-                            <div>
-                                <EnvironmentOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                                <Text>{item.currentLocation}</Text>
-                            </div>
-                            <div>
-                                <CarOutlined style={{ marginRight: 8 }} />
-                                <Text>{item.capacity}</Text>
-                            </div>
-                            <div>
-                                <ClockCircleOutlined style={{ marginRight: 8 }} />
-                                <Text>{item.availableFrom}</Text>
-                            </div>
-                        </Space>
-                        
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f0f0f0', paddingTop: 12 }}>
-                            <Space>
-                                <Avatar size="small">{item.companyName.charAt(0)}</Avatar>
-                                <Text>{item.companyName}</Text>
-                                <StarFilled style={{ color: '#faad14' }} />
-                                <Text>{item.rating}</Text>
-                            </Space>
-                            <Button type="primary" size="small">
-                                Contact
-                            </Button>
-                        </div>
-                    </Card>
+                        id={item.id}
+                        truckType={item.truckType}
+                        truckNumber={item.truckNumber}
+                        truckModel={item.truckType} // Using truckType as model for now
+                        currentLocation={item.currentLocation}
+                        lastUpdated={item.availableFrom}
+                        capacity={item.capacity}
+                        tyreCount="6 tyres" // Default value
+                        length="20 feet" // Default value
+                        companyName={item.companyName}
+                        companyType="Truck Owner" // Default value
+                        rating={item.rating.toString()}
+                    />
                 ))}
             </div>
 
